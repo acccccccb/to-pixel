@@ -10,11 +10,11 @@
     <n-config-provider :theme="darkTheme">
         <n-message-provider>
             <n-layout content-style="min-height: 100vh">
-                <n-layout-header>to-pixel</n-layout-header>
-                <n-layout-content content-style="padding: 24px">
+                <n-layout-header class="header">To Pixel</n-layout-header>
+                <n-layout-content class="content" content-style="padding: 24px">
                     <Converter />
                 </n-layout-content>
-                <n-layout-footer>powered by vue</n-layout-footer>
+                <n-layout-footer class="footer">powered by vue</n-layout-footer>
             </n-layout>
         </n-message-provider>
     </n-config-provider>
@@ -34,5 +34,19 @@
         padding: 0;
         margin: 0;
         height: 100%;
+    }
+    .header {
+        line-height: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 2em;
+    }
+    .content {
+        min-height: calc(100vh - 100px);
+    }
+    .footer {
+        line-height: 50px;
+        height: 50px;
+        text-align: center;
     }
 </style>

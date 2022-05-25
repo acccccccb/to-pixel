@@ -15,16 +15,17 @@
                 </n-gi>
                 <n-gi :span="18" :offset="3">
                     <n-upload
-                        multiple
+                        :show-file-list="false"
+                        v-model:file-list="fileList"
                         directory-dnd
                         accept="image/*"
                         :custom-request="customRequest"
                     >
-                        <n-upload-dragger :multiple="false" style="width: 100%">
+                        <n-upload-dragger style="width: 100%">
                             <div style="margin-bottom: 12px">
-                                <n-icon size="48" :depth="3">
+                                <n-icon size="32" :depth="3">
                                     <Archive></Archive>
-                                </n-icon>
+                                </n-icon> 
                             </div>
                             <n-text style="font-size: 16px">
                                 点击或者拖动文件到该区域来生成像素图片
@@ -35,15 +36,36 @@
                         </n-upload-dragger>
                     </n-upload>
                 </n-gi>
-                <n-gi :span="18" :offset="3">
-                    <n-slider
-                        v-model:value="pixSize"
-                        :step="1"
-                        :min="1"
-                        :max="max"
-                        :on-update:value="sliderChange"
-                    />
-                    {{ pixSize }}
+                <n-gi :span="9" :offset="3">
+                    <n-form-item label-placement="left" label="颜色">
+                        <n-radio-group v-model:value="bit" name="bit" :on-update:value="(val) => { bit = val; sliderChange() }">
+                            <n-space>
+                                <n-radio :key="8" :value="8">
+                                    {{ 8 }}位
+                                </n-radio>
+                                <n-radio :key="16" :value="16">
+                                    {{ 16 }}位
+                                </n-radio>
+                                <n-radio :key="32" :value="32">
+                                    {{ 32 }}位
+                                </n-radio>
+                                <n-radio :key="64" :value="64">
+                                    {{ 64 }}位
+                                </n-radio>
+                            </n-space>
+                        </n-radio-group>
+                    </n-form-item>
+                </n-gi>
+                <n-gi :span="9">
+                    <n-form-item label-placement="left" label="像素大小">
+                        <n-slider
+                            v-model:value="pixSize"
+                            :step="1"
+                            :min="min"
+                            :max="max"
+                            :on-update:value="(val) => { pixSize = val; sliderChange() }"
+                        />
+                    </n-form-item>
                 </n-gi>
             </n-grid>
         </n-gi>
@@ -53,7 +75,6 @@
 <script>
     import { Archive } from '@vicons/ionicons5';
     import { useMessage } from 'naive-ui';
-    console.log('useMessage', useMessage);
     export default {
         name: 'Converter',
         setup() {
@@ -68,9 +89,15 @@
         },
         data() {
             return {
-                pixSize: 5,
+                fileList: [],
+                timmer: null,
+                bit: 16,
+                pixSize: 10,
                 min: 5,
-                max: 1,
+                max: 5,
+                r: 0,
+                g: 0,
+                b: 0
             };
         },
         methods: {
@@ -115,21 +142,14 @@
 
                         // TODO 重新写入像素
                         const myImageData = ctx.createImageData(pixSize, pixSize);
-                        console.log('myImageData', myImageData.data);
-                        myImageData.data.forEach(item => {
-                            item[0] = 0;
-                            item[1] = 0;
-                            item[2] = 0;
-                            item[3] = 255;
+                        myImageData.data.forEach((item, index) => {
+                            if((index + 1)%4 === 0) {
+                                myImageData.data[index] = color[3];
+                            } else {
+                                myImageData.data[index] = color[(index + 1)%4 - 1];
+                            }
                         });
                         ctx.putImageData(myImageData, i * pixSize, line * pixSize);
-                        // ctx.fillStyle = `rgba(${color.join(',')})`;
-                        // ctx.fillRect(
-                        //     i * pixSize,
-                        //     line * pixSize,
-                        //     pixSize,
-                        //     pixSize
-                        // );
                         if (i === pixWidth && line < pixHeight - 1) {
                             line++;
                             loop(line);
@@ -137,7 +157,6 @@
                     }
                 };
                 loop(line);
-                console.log('imageDataArr', imageDataArr);
             },
             readImg(file) {
                 return new Promise((resolve) => {
@@ -159,16 +178,15 @@
                 // const g = imageData[1] === max ? 255 : imageData[1];
                 // const b = imageData[2] === max ? 255 : imageData[2];
 
-                const bit = 32;
-                const byte = 256 / bit;
-                const r = imageData[0];
-                const g = imageData[1];
-                const b = imageData[2];
+                const bit = this.bit;
+                const r = Math.ceil(imageData[0]/bit) * bit + this.r;
+                const g = Math.ceil(imageData[1]/bit) * bit + this.g;
+                const b = Math.ceil(imageData[2]/bit) * bit + this.b;
                 const a = imageData[3];
                 return [r, g, b, a];
             },
             async customRequest(e) {
-                console.log(e);
+                console.log(this.fileList);
                 const $image = await this.readImg(e.file.file);
                 if ($image) {
                     if ($image.width > 5000 || $image.height > 5000) {
@@ -187,10 +205,14 @@
                 }
             },
             sliderChange(val) {
-                this.pixSize = val;
-                if (this.img) {
-                    this.drawToCanvas(this.img);
+                if(this.timmer) {
+                    clearTimeout(this.timmer);
                 }
+                this.timmer = setTimeout(() => {
+                    if (this.img) {
+                        this.drawToCanvas(this.img);
+                    }
+                }, 200)
             },
         },
     };
