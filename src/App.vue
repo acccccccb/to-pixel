@@ -8,13 +8,15 @@
 
 <template>
     <n-config-provider :theme="darkTheme">
-        <n-layout content-style="min-height: 100vh">
-            <n-layout-header>to-pixel</n-layout-header>
-            <n-layout-content content-style="padding: 24px">
-                <Converter />
-            </n-layout-content>
-            <n-layout-footer>powered by vue</n-layout-footer>
-        </n-layout>
+        <n-message-provider>
+            <n-layout content-style="min-height: 100vh">
+                <n-layout-header>to-pixel</n-layout-header>
+                <n-layout-content content-style="padding: 24px">
+                    <Converter />
+                </n-layout-content>
+                <n-layout-footer>powered by vue</n-layout-footer>
+            </n-layout>
+        </n-message-provider>
     </n-config-provider>
 </template>
 <script></script>

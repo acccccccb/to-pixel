@@ -1,18 +1,17 @@
-<script setup>
-    import { Archive } from '@vicons/ionicons5';
-    import { useMessage } from 'naive-ui';
-</script>
 <template>
     <n-grid x-gap="10" :y-gap="10" :cols="24" style="text-align: center">
-        <n-gi :span="8" :offset="8">
+        <n-gi :span="24">
             <n-grid
                 x-gap="10"
                 :y-gap="10"
                 :cols="24"
                 style="text-align: center"
             >
-                <n-gi :span="24" class="canvas-box">
-                    <canvas ref="canv" :width="0" :height="0"></canvas>
+                <n-gi :span="6" :offset="3" class="canvas-box">
+                    <canvas ref="canv1" :width="0" :height="0"></canvas>
+                </n-gi>
+                <n-gi :span="6" :offset="3" class="canvas-box">
+                    <canvas ref="canv2" :width="0" :height="0"></canvas>
                 </n-gi>
                 <n-gi :span="18" :offset="3">
                     <n-upload
@@ -52,52 +51,55 @@
 </template>
 
 <script>
+    import { Archive } from '@vicons/ionicons5';
+    import { useMessage } from 'naive-ui';
+    console.log('useMessage', useMessage);
     export default {
         name: 'Converter',
+        setup() {
+            let message = useMessage();
+            return {
+                message
+            }
+            
+        },
+        components: {
+            Archive,
+        },
         data() {
             return {
                 pixSize: 5,
-                min: 1,
+                min: 5,
                 max: 1,
             };
         },
         methods: {
-            async chooseImg(e) {
-                const fileList = e.target.files;
-                const file = fileList.length > 0 ? fileList[0] : null;
-                if (file) {
-                    const $image = await this.readImg(file);
-                    if ($image) {
-                        console.log('$image.width', $image.width);
-                        if ($image.width || $image.height > 500) {
-                            new useMessage().info('图片尺寸不得超过500', {
-                                duration: 3000,
-                            });
-                            return false;
-                        }
-                        this.img = $image;
-                        this.max =
-                            $image.width < $image.height
-                                ? $image.width
-                                : $image.height;
-                        this.drawToCanvas(this.img);
-                    }
-                }
+            drawToOrignal($image) {
+                const pixSize = this.pixSize;
+                const width = $image.width;
+                const height = $image.height;
+                const canv = this.$refs.canv1;
+                canv.width = width;
+                canv.height = height;
+                const ctx = canv.getContext('2d');
+                ctx.drawImage($image, 0, 0);
             },
             drawToCanvas($image) {
                 // 绘制图片
                 const pixSize = this.pixSize;
                 const width = $image.width;
                 const height = $image.height;
-                const canv = this.$refs.canv;
+                const canv = this.$refs.canv2;
                 canv.width = width;
                 canv.height = height;
                 const ctx = canv.getContext('2d');
                 ctx.drawImage($image, 0, 0);
                 const pixWidth = Math.ceil(width / pixSize);
                 const pixHeight = Math.ceil(height / pixSize);
-                console.log('pixHeight', pixHeight);
+                // console.log('pixHeight', pixHeight);
                 let line = 0;
+
+                const imageDataArr = [];
                 const loop = (line) => {
                     for (let i = 0; i <= pixWidth; i++) {
                         const x = i * pixSize + Math.floor(pixSize / 2);
@@ -109,13 +111,25 @@
                             1
                         );
                         const color = this.convertColor(imageData.data);
-                        ctx.fillStyle = `rgba(${color.join(',')})`;
-                        ctx.fillRect(
-                            i * pixSize,
-                            line * pixSize,
-                            pixSize,
-                            pixSize
-                        );
+                        imageDataArr.push(color);
+
+                        // TODO 重新写入像素
+                        const myImageData = ctx.createImageData(pixSize, pixSize);
+                        console.log('myImageData', myImageData.data);
+                        myImageData.data.forEach(item => {
+                            item[0] = 0;
+                            item[1] = 0;
+                            item[2] = 0;
+                            item[3] = 255;
+                        });
+                        ctx.putImageData(myImageData, i * pixSize, line * pixSize);
+                        // ctx.fillStyle = `rgba(${color.join(',')})`;
+                        // ctx.fillRect(
+                        //     i * pixSize,
+                        //     line * pixSize,
+                        //     pixSize,
+                        //     pixSize
+                        // );
                         if (i === pixWidth && line < pixHeight - 1) {
                             line++;
                             loop(line);
@@ -123,6 +137,7 @@
                     }
                 };
                 loop(line);
+                console.log('imageDataArr', imageDataArr);
             },
             readImg(file) {
                 return new Promise((resolve) => {
@@ -143,6 +158,9 @@
                 // const r = imageData[0] === max ? 255 : imageData[0];
                 // const g = imageData[1] === max ? 255 : imageData[1];
                 // const b = imageData[2] === max ? 255 : imageData[2];
+
+                const bit = 32;
+                const byte = 256 / bit;
                 const r = imageData[0];
                 const g = imageData[1];
                 const b = imageData[2];
@@ -153,9 +171,8 @@
                 console.log(e);
                 const $image = await this.readImg(e.file.file);
                 if ($image) {
-                    if ($image.width || $image.height > 500) {
-                        const $message = useMessage();
-                        $message.info('图片尺寸不得超过500', {
+                    if ($image.width > 5000 || $image.height > 5000) {
+                        message.info('图片尺寸不得超过500', {
                             duration: 3000,
                         });
                         return false;
@@ -166,6 +183,7 @@
                             ? $image.width
                             : $image.height;
                     this.drawToCanvas(this.img);
+                    this.drawToOrignal(this.img);
                 }
             },
             sliderChange(val) {
@@ -179,7 +197,7 @@
 </script>
 
 <style scoped>
-    /deep/ .n-upload-trigger {
+    :deep() .n-upload-trigger {
         width: 100%;
     }
     .canvas-box {
