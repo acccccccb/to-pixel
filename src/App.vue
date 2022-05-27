@@ -3,7 +3,7 @@
     // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
     import Converter from './components/Converter.vue';
     import { defineComponent, ref } from 'vue';
-    import { darkTheme } from 'naive-ui';
+    import { darkTheme, lightTheme } from 'naive-ui';
 </script>
 
 <template>
@@ -11,7 +11,10 @@
         <n-message-provider>
             <n-layout content-style="min-height: 100vh">
                 <n-layout-header class="header">To Pixel</n-layout-header>
-                <n-layout-content class="content" content-style="padding: 24px">
+                <n-layout-content
+                    class="content"
+                    content-style="margin-top: 100px;"
+                >
                     <Converter />
                 </n-layout-content>
                 <n-layout-footer class="footer">powered by vue</n-layout-footer>
@@ -36,13 +39,13 @@
         height: 100%;
     }
     .header {
-        line-height: 50px;
-        height: 50px;
+        line-height: 80px;
+        height: 80px;
         text-align: center;
         font-size: 2em;
     }
     .content {
-        min-height: calc(100vh - 100px);
+        min-height: calc(100vh - 130px);
     }
     .footer {
         line-height: 50px;
