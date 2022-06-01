@@ -36,6 +36,7 @@
                                 选择图片
                             </n-button>
                         </n-upload>
+                        <span class="file-name">{{ img ? img.name : '' }}</span>
                     </n-form-item>
                     <n-form-item label="颜色：">
                         <n-radio-group
@@ -294,7 +295,8 @@
             async customRequest(e) {
                 console.log('customRequest', e);
                 const $image = await this.readImg(e.file.file);
-                console.log('$image', $image.width, $image.height);
+                $image.name = e.file.name;
+                console.log('$image', $image);
                 if ($image) {
                     if ($image.width > 5000 || $image.height > 5000) {
                         message.info('图片尺寸不得超过5000', {
@@ -340,7 +342,14 @@
         align-content: center;
         height: 500px;
         width: 100%;
-        border: 1px solid #dedede;
+        border: 1px solid #63e2b7;
         overflow: hidden;
+    }
+    .file-name {
+        display: inline-block;
+        text-overflow: hidden;
+        overflow: hidden;
+        word-break: break-all;
+        white-space: nowrap;
     }
 </style>
