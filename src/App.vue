@@ -8,18 +8,24 @@
 
 <template>
     <n-config-provider :theme="darkTheme">
-        <n-message-provider>
-            <n-layout content-style="min-height: 100vh">
-                <n-layout-header class="header">To Pixel</n-layout-header>
-                <n-layout-content
-                    class="content"
-                    content-style="margin-top: 100px;"
+        <n-layout content-style="min-height: 100vh">
+            <n-layout-header class="header">To Pixel</n-layout-header>
+            <n-layout-content class="content" content-style="width: 100%;">
+                <n-grid
+                    x-gap="10"
+                    :y-gap="10"
+                    :cols="24"
+                    style="text-align: center"
                 >
-                    <Converter />
-                </n-layout-content>
-                <n-layout-footer class="footer">powered by vue</n-layout-footer>
-            </n-layout>
-        </n-message-provider>
+                    <n-gi :span="20" :offset="2">
+                        <n-message-provider>
+                            <Converter />
+                        </n-message-provider>
+                    </n-gi>
+                </n-grid>
+            </n-layout-content>
+            <n-layout-footer class="footer">powered by vue</n-layout-footer>
+        </n-layout>
     </n-config-provider>
 </template>
 <script></script>
@@ -46,6 +52,9 @@
     }
     .content {
         min-height: calc(100vh - 130px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .footer {
         line-height: 50px;

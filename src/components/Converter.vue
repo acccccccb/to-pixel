@@ -1,144 +1,146 @@
 <template>
-    <n-grid x-gap="10" :y-gap="10" :cols="24" style="text-align: center">
-        <n-gi :span="24">
-            <n-grid
-                x-gap="10"
-                :y-gap="10"
-                :cols="24"
-                style="text-align: center"
-            >
-                <n-gi :span="6" :offset="3" class="canvas-box">
-                    <canvas ref="canv" :width="0" :height="0"></canvas>
-                </n-gi>
-                <n-gi :span="6" :offset="4" style="text-align: left">
-                    <n-form
-                        label-placement="left"
-                        label-width="auto"
-                        require-mark-placement="right-hanging"
-                    >
-                        <n-form-item label="上传图片：">
-                            <n-upload
-                                :show-file-list="false"
-                                v-model:file-list="fileList"
-                                directory-dnd
-                                accept="image/*"
-                                :custom-request="customRequest"
-                            >
-                                <n-button type="primary">
-                                    <template #icon>
-                                        <n-icon>
-                                            <Archive />
-                                        </n-icon>
-                                    </template>
-                                    选择图片
-                                </n-button>
-                            </n-upload>
-                        </n-form-item>
-                        <n-form-item label="颜色：">
-                            <n-radio-group
-                                v-model:value="bit"
-                                name="bit"
-                                :on-update:value="
-                                    (val) => {
-                                        bit = val;
-                                        sliderChange();
-                                    }
-                                "
-                            >
-                                <n-space>
-                                    <n-radio :key="1" :value="1">
-                                        {{ 256 / 1 }}位
-                                    </n-radio>
-                                    <n-radio :key="4" :value="4">
-                                        {{ 256 / 4 }}位
-                                    </n-radio>
-                                    <n-radio :key="8" :value="8">
-                                        {{ 256 / 8 }}位
-                                    </n-radio>
-                                    <n-radio :key="16" :value="16">
-                                        {{ 256 / 16 }}位
-                                    </n-radio>
-                                    <n-radio :key="32" :value="32">
-                                        {{ 256 / 32 }}位
-                                    </n-radio>
-                                </n-space>
-                            </n-radio-group>
-                        </n-form-item>
-                        <n-form-item label="像素大小：">
-                            <n-slider
-                                :disabled="!img"
-                                v-model:value="pixSize"
-                                :step="1"
-                                :min="min"
-                                :max="max"
-                                :on-update:value="
-                                    (val) => {
-                                        pixSize = val;
-                                        sliderChange();
-                                    }
-                                "
-                            />
-                        </n-form-item>
-
-                        <n-form-item label="R：">
-                            <n-slider
-                                :disabled="!img"
-                                v-model:value="r"
-                                :step="1"
-                                :min="-100"
-                                :max="100"
-                                :on-update:value="
-                                    (val) => {
-                                        r = val;
-                                        sliderChange();
-                                    }
-                                "
-                            />
-                        </n-form-item>
-                        <n-form-item label="G：">
-                            <n-slider
-                                :disabled="!img"
-                                v-model:value="g"
-                                :step="1"
-                                :min="-100"
-                                :max="100"
-                                :on-update:value="
-                                    (val) => {
-                                        g = val;
-                                        sliderChange();
-                                    }
-                                "
-                            />
-                        </n-form-item>
-                        <n-form-item label="B：">
-                            <n-slider
-                                :disabled="!img"
-                                v-model:value="b"
-                                :step="1"
-                                :min="-100"
-                                :max="100"
-                                :on-update:value="
-                                    (val) => {
-                                        b = val;
-                                        sliderChange();
-                                    }
-                                "
-                            />
-                        </n-form-item>
-                        <n-form-item label=" ">
-                            <n-button
-                                secondary
-                                type="tertiary"
-                                size="small"
-                                :disabled="!img"
-                                @click="resetRgb"
-                            >
-                                复位
+    <n-grid :x-gap="50" :y-gap="10" :cols="24" style="text-align: center">
+        <n-gi :span="14" class="canvas-box">
+            <canvas ref="canv" :width="0" :height="0"></canvas>
+        </n-gi>
+        <n-gi
+            :span="10"
+            style="
+                text-align: left;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            "
+        >
+            <div>
+                <n-form
+                    label-placement="left"
+                    label-width="auto"
+                    require-mark-placement="right-hanging"
+                >
+                    <n-form-item label="上传图片：">
+                        <n-upload
+                            :show-file-list="false"
+                            v-model:file-list="fileList"
+                            @update:file-list="handleFileListChange"
+                            directory-dnd
+                            accept="image/*"
+                            :custom-request="customRequest"
+                        >
+                            <n-button type="primary">
+                                <template #icon>
+                                    <n-icon>
+                                        <Archive />
+                                    </n-icon>
+                                </template>
+                                选择图片
                             </n-button>
-                        </n-form-item>
-                    </n-form>
-                </n-gi>
-            </n-grid>
+                        </n-upload>
+                    </n-form-item>
+                    <n-form-item label="颜色：">
+                        <n-radio-group
+                            v-model:value="bit"
+                            name="bit"
+                            :on-update:value="
+                                (val) => {
+                                    bit = val;
+                                    sliderChange();
+                                }
+                            "
+                        >
+                            <n-space>
+                                <n-radio :key="1" :value="1">
+                                    {{ 256 / 1 }}位
+                                </n-radio>
+                                <n-radio :key="4" :value="4">
+                                    {{ 256 / 4 }}位
+                                </n-radio>
+                                <n-radio :key="8" :value="8">
+                                    {{ 256 / 8 }}位
+                                </n-radio>
+                                <n-radio :key="16" :value="16">
+                                    {{ 256 / 16 }}位
+                                </n-radio>
+                                <n-radio :key="32" :value="32">
+                                    {{ 256 / 32 }}位
+                                </n-radio>
+                            </n-space>
+                        </n-radio-group>
+                    </n-form-item>
+                    <n-form-item label="像素大小：">
+                        <n-slider
+                            :disabled="!img"
+                            v-model:value="pixSize"
+                            :step="1"
+                            :min="min"
+                            :max="max"
+                            :on-update:value="
+                                (val) => {
+                                    pixSize = val;
+                                    sliderChange();
+                                }
+                            "
+                        />
+                    </n-form-item>
+
+                    <n-form-item label="R：">
+                        <n-slider
+                            :disabled="!img"
+                            v-model:value="r"
+                            :step="1"
+                            :min="-100"
+                            :max="100"
+                            :on-update:value="
+                                (val) => {
+                                    r = val;
+                                    sliderChange();
+                                }
+                            "
+                        />
+                    </n-form-item>
+                    <n-form-item label="G：">
+                        <n-slider
+                            :disabled="!img"
+                            v-model:value="g"
+                            :step="1"
+                            :min="-100"
+                            :max="100"
+                            :on-update:value="
+                                (val) => {
+                                    g = val;
+                                    sliderChange();
+                                }
+                            "
+                        />
+                    </n-form-item>
+                    <n-form-item label="B：">
+                        <n-slider
+                            :disabled="!img"
+                            v-model:value="b"
+                            :step="1"
+                            :min="-100"
+                            :max="100"
+                            :on-update:value="
+                                (val) => {
+                                    b = val;
+                                    sliderChange();
+                                }
+                            "
+                        />
+                    </n-form-item>
+                    <n-form-item label=" ">
+                        <n-button
+                            secondary
+                            type="tertiary"
+                            size="small"
+                            :disabled="!img"
+                            @click="resetRgb"
+                        >
+                            复位
+                        </n-button>
+                    </n-form-item>
+                </n-form>
+            </div>
         </n-gi>
     </n-grid>
 </template>
@@ -182,29 +184,20 @@
                 let height = $image.height;
                 const p = width / height;
                 const canv = this.$refs.canv;
-                canv.width = 500;
-                canv.height = 500;
                 const ctx = canv.getContext('2d');
 
                 if (width > height) {
                     const scale = width / 500;
-                    ctx.drawImage(
-                        $image,
-                        0,
-                        0,
-                        scale > 1 ? 500 : width,
-                        height / scale
-                    );
+                    width = scale > 1 ? 500 : width;
+                    height = scale > 1 ? height / scale : height;
                 } else {
                     const scale = height / 500;
-                    ctx.drawImage(
-                        $image,
-                        0,
-                        0,
-                        width / scale,
-                        scale > 1 ? 500 : height
-                    );
+                    width = scale > 1 ? width / scale : width;
+                    height = scale > 1 ? 500 : height;
                 }
+                canv.width = width;
+                canv.height = height;
+                ctx.drawImage($image, 0, 0, width, height);
                 if (pixSize === 1) {
                     return false;
                 }
@@ -255,8 +248,10 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const $image = new Image();
-                        $image.onload = () => {
-                            resolve($image);
+                        $image.onload = (res) => {
+                            setTimeout(() => {
+                                resolve($image);
+                            }, 50);
                         };
                         $image.src = e.target.result;
                     };
@@ -291,8 +286,15 @@
                 const a = imageData[3];
                 return [r, g, b, a];
             },
+            handleFileListChange(fileList) {
+                console.log('handleFileListChange', fileList);
+                this.fileList =
+                    fileList.length > 0 ? [fileList[fileList.length - 1]] : [];
+            },
             async customRequest(e) {
+                console.log('customRequest', e);
                 const $image = await this.readImg(e.file.file);
+                console.log('$image', $image.width, $image.height);
                 if ($image) {
                     if ($image.width > 5000 || $image.height > 5000) {
                         message.info('图片尺寸不得超过5000', {
@@ -302,7 +304,7 @@
                     }
                     this.img = $image;
                     this.max =
-                        $image.width < $image.height
+                        $image.width > $image.height
                             ? $image.width
                             : $image.height;
                     this.drawToCanvas(this.img);
