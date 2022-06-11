@@ -1,7 +1,22 @@
-# Vue 3 + Vite
+# To pixel
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+像素化图片 使用 vite +vue3 + naive-ui 开发
 
-## Recommended IDE Setup
+## 运行
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+```npm run dev```
+
+
+[.src/assets/gpang.WEBP]
+
+## 处理前
+
+![before](src/assets/gpang.WEBP)
+
+## 处理后
+
+![after](src/assets/pixel.png)
+
+## 预览
+
+![after](src/assets/shot.png)

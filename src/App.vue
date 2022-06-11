@@ -24,7 +24,9 @@
                     </n-gi>
                 </n-grid>
             </n-layout-content>
-            <n-layout-footer class="footer">powered by vue</n-layout-footer>
+            <n-layout-footer class="footer">
+                <a href="https://gitee.com/GLUESTICK/to-pixel">Gitee</a>
+            </n-layout-footer>
         </n-layout>
     </n-config-provider>
 </template>
@@ -60,5 +62,8 @@
         line-height: 50px;
         height: 50px;
         text-align: center;
+    }
+    .footer a {
+        color: #fff;
     }
 </style>
