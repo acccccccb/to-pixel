@@ -6,9 +6,6 @@
 
 ```npm run dev```
 
-
-[.src/assets/gpang.WEBP]
-
 ## 处理前
 
 ![before](src/assets/gpang.WEBP)
