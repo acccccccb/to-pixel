@@ -2,6 +2,10 @@
 
 像素化图片 使用 vite +vue3 + naive-ui 开发
 
+# 预览地址
+
+[https://acccccccb.github.io/to-pixel/](https://acccccccb.github.io/to-pixel/)
+
 ## 运行
 
 ```npm run dev```
