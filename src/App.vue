@@ -25,7 +25,13 @@
                 </n-grid>
             </n-layout-content>
             <n-layout-footer class="footer">
-                <a href="https://gitee.com/GLUESTICK/to-pixel">Gitee</a>
+                <a target="_blank" href="https://gitee.com/GLUESTICK/to-pixel">
+                    Gitee
+                </a>
+                |
+                <a target="_blank" href="https://github.com/acccccccb/to-pixel">
+                    Github
+                </a>
             </n-layout-footer>
         </n-layout>
     </n-config-provider>

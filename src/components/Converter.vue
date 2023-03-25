@@ -18,7 +18,7 @@
                     label-width="auto"
                     require-mark-placement="right-hanging"
                 >
-                    <n-form-item label="上传图片：">
+                    <n-form-item label="选择图片：">
                         <n-upload
                             :show-file-list="false"
                             v-model:file-list="fileList"
@@ -69,12 +69,12 @@
                         </n-radio-group>
                     </n-form-item>
                     <n-form-item label="像素大小：">
-                        <n-slider
+                        <n-input-number
                             :disabled="!img"
-                            v-model:value="pixSize"
                             :step="1"
                             :min="min"
                             :max="max"
+                            v-model:value="pixSize"
                             :on-update:value="
                                 (val) => {
                                     pixSize = val;
